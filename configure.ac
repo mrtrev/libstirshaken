@@ -26,6 +26,18 @@ SAC_OPENSSL
 
 if test x$HAVE_OPENSSL = x1; then
 	openssl_CFLAGS="$openssl_CFLAGS -DHAVE_OPENSSL";
+
+AC_MSG_CHECKING([for OpenSSL >= 3.0.0])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <openssl/opensslv.h>
+#if OPENSSL_VERSION_PREREQ(3,0)
+#error "you_have_version_3"
+#endif
+   ]], [[]])],
+   [ AC_MSG_RESULT([no]) ],
+   [ AC_MSG_RESULT([yes]);
+     AC_DEFINE(OPENSSL_SUPPRESS_DEPRECATED, 1, [disable openssl deprecated-function warnings]) ])
+
 else
 	AC_MSG_ERROR([OpenSSL >= 1.0.1e and associated developement headers required])
 fi
